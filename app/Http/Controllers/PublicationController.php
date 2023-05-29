@@ -29,7 +29,8 @@ class PublicationController extends Controller
      */
     public function index()
     {
-        //
+        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->get();
+        return response(compact("data"));
     }
 
     /**

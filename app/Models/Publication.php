@@ -22,6 +22,13 @@ class Publication extends Model
         'files'
     ];
 
+    const SELECT_INDEX = [
+        'id',
+        'title',
+        'price',
+        'status_id'
+    ];
+
     protected $fillable = [
         'title',
         'stock',

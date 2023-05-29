@@ -9,8 +9,7 @@ class CategoryController extends Controller
 {
     public function get_all_categories()
     {
-        return response()->json([
-            'categories' => Category::all() 
-        ]);
+        $categories = Category::all();
+        return response(compact("categories"));
     }
 }
