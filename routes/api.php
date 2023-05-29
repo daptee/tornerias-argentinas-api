@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +28,8 @@ Route::controller(UserController::class)->group(function () {
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::resource('publications', PublicationController::class);
 });
+
+Route::get('categories', [CategoryController::class, 'get_all_categories']);
