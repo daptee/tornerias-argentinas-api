@@ -15,4 +15,8 @@ class PublicationCategory extends Model
     {
         return $this->hasOne(Category::class, 'id', 'category_id');
     }
+
+    protected $hidden = [
+        'category_id'
+    ];
 }

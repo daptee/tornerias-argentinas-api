@@ -10,10 +10,11 @@ class Publication extends Model
 {
     use HasFactory;
 
-    const SHOW = [
-        'status',
-        'categories.category',
-        'files'
+    const SELECT_INDEX = [
+        'id',
+        'title',
+        'price',
+        'status_id'
     ];
 
     const INDEX = [
@@ -22,11 +23,19 @@ class Publication extends Model
         'files'
     ];
 
-    const SELECT_INDEX = [
+    const SELECT_SHOW = [
         'id',
         'title',
         'price',
+        'description',
+        'stock',
         'status_id'
+    ];
+
+    const SHOW = [
+        'status',
+        'categories.category',
+        'files'
     ];
 
     protected $fillable = [
@@ -35,6 +44,10 @@ class Publication extends Model
         'price',
         'description',
         'status_id',
+    ];
+
+    protected $hidden = [
+        'status_id'
     ];
 
     public function status(): HasOne

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PublicationRequest;
+use App\Http\Requests\QualifyProductRequest;
 use App\Models\Publication;
 use App\Models\PublicationCategory;
 use App\Models\PublicationFile;
+use App\Models\PublicationQualification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Exception;
@@ -18,7 +21,7 @@ class PublicationController extends Controller
     public $s = "publicacion";
     public $sp = "publicaciones";
     public $ss = "publicacion/es";
-    public $v = "o"; 
+    public $v = "a"; 
     public $pr = "la"; 
     public $prp = "las";
 
@@ -34,6 +37,52 @@ class PublicationController extends Controller
                             ->get();
 
         return response(compact("data"));
+    }
+
+    public function get_featured()
+    {
+        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+        ->orderBy('id', 'desc')->take(6)
+        ->get();
+
+        return response(compact("data"));
+    }
+
+    public function get_publications_filters(Request $request)
+    {
+        $message = "Error al traer listado de {$this->sp}.";
+        try {
+            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+            ->when($request->category_id, function ($query) use ($request) {
+                return $query->whereHas('categories', function ($subQuery) use ($request) {
+                    $subQuery->where('category_id', $request->category_id);
+                });
+            })
+            ->when($request->price_from, function ($query) use ($request) {
+                return $query->where('price', '>=', $request->price_from);
+            })
+            ->when($request->price_to, function ($query) use ($request) {
+                return $query->where('price', '<=', $request->price_to);
+            })
+            ->when($request->q, function ($query) use ($request) {
+                return $query->where('title', 'LIKE', '%'.$request->q.'%');
+            })
+            ->orderBy('id', 'desc');
+            
+            $total = $query->count();
+            $total_per_page = 30;
+            $data  = $query->paginate($total_per_page);
+            $current_page = $request->page ?? $data->currentPage();
+            $last_page = $data->lastPage();
+
+        } catch (ModelNotFoundException $error) {
+            return response(["message" => "No se encontraron " . $this->sp . "."], 404);
+        } catch (Exception $error) {
+            return response(["message" => $message, "error" => $error->getMessage()], 500);
+        }
+        $message = ucfirst($this->sp) . " encontrad{$this->v}s exitosamente.";
+
+        return response(compact("message", "data", "total", "total_per_page", "current_page", "last_page"));
     }
 
     /**
@@ -105,7 +154,14 @@ class PublicationController extends Controller
      */
     public function show($id)
     {
-        //
+        $publication = $this->getAllPublication($id);
+    
+        return response(compact("publication"));
+    }
+
+    public function getAllPublication($id)
+    {
+        return $this->model::select($this->model::SELECT_SHOW)->with($this->model::SHOW)->find($id);
     }
 
     /**
@@ -140,5 +196,31 @@ class PublicationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function qualify_product(QualifyProductRequest $request)
+    {
+        $publication = $this->model::find($request->publication_id);
+
+        if(!$publication)
+            return response(["message" => "No existe publicacion con el publication_id otorgado."], 400);
+
+        $user = User::find($request->user_id);
+
+        if(!$user)
+            return response(["message" => "No existe usuario con el user_id otorgado."], 400);
+
+        $existing_qualification = PublicationQualification::where('publication_id', $request->publication_id)->where('user_id', $request->user_id)->count();
+        
+        if($existing_qualification > 0)
+            return response(["message" => "Esta publicacion ya posee calificación de este usuario."], 400);
+
+        
+        $publication_qualification = PublicationQualification::create($request->all());
+        $message = "Producto calificado exitosamente";
+        
+        $publication_qualification = PublicationQualification::get_all_publication_qualification($publication_qualification->id);
+        
+        return response(compact("message", "publication_qualification"));
     }
 }
