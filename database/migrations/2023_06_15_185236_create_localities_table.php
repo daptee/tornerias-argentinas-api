@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('publications_qualifications', function (Blueprint $table) {
+        Schema::create('localities', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('publication_id')->references('id')->on('publications');
-            $table->foreignId('user_id')->references('id')->on('users');
-            $table->integer('qualification');
-            $table->text('comment')->nullable();
+            $table->string('localidad');
+            $table->string('cp');
+            $table->foreignId('province_id')->references('id')->on('provinces');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('publications_qualifications');
+        Schema::dropIfExists('localities');
     }
 };

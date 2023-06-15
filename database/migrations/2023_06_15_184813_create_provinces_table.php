@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('publications_qualifications', function (Blueprint $table) {
+        Schema::create('provinces', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('publication_id')->references('id')->on('publications');
-            $table->foreignId('user_id')->references('id')->on('users');
-            $table->integer('qualification');
-            $table->text('comment')->nullable();
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('publications_qualifications');
+        Schema::dropIfExists('provinces');
     }
 };

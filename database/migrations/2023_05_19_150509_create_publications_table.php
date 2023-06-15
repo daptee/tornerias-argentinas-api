@@ -17,9 +17,9 @@ return new class extends Migration
         Schema::create('publications', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->integer('stock');
-            $table->decimal('price', 10, 2);
-            $table->text('description');
+            $table->integer('stock')->nullable();
+            $table->decimal('price', 10, 2)->nullable();
+            $table->text('description')->nullable();
             $table->foreignId('status_id')->references('id')->on('publications_status')->default(PublicationStatus::ON_SALE);
             $table->timestamps();
         });

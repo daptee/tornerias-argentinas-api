@@ -25,6 +25,7 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::controller(UserController::class)->group(function () {
     Route::post('recover-password', 'recover_password_user');
+    Route::post('qualify_seller', 'qualify_seller');
 });
 
 Route::controller(PublicationController::class)->group(function () {
@@ -35,6 +36,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::resource('publications', PublicationController::class);
+    Route::post('users/update', [UserController::class, 'update']);
     Route::get('publications_featured', [PublicationController::class, 'get_featured']);
     Route::get('get_publications_filters', [PublicationController::class, 'get_publications_filters']);
 });

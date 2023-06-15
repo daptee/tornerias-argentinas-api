@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -32,6 +33,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
+        'locality_id',
         // 'remember_token',
     ];
 
@@ -55,7 +57,11 @@ class User extends Authenticatable implements JWTSubject
 
     public static function getAllDataUser($id)
     {
-        // User::with
-        return User::find($id);
+        return User::with(['locality.province'])->find($id);
+    }
+
+    public function locality(): HasOne
+    {
+        return $this->hasOne(Locality::class, 'id', 'locality_id');
     }
 }

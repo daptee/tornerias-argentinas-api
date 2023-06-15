@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 
 class PublicationController extends Controller
 {
@@ -215,7 +216,6 @@ class PublicationController extends Controller
         if($existing_qualification > 0)
             return response(["message" => "Esta publicacion ya posee calificación de este usuario."], 400);
 
-        
         $publication_qualification = PublicationQualification::create($request->all());
         $message = "Producto calificado exitosamente";
         
@@ -223,4 +223,11 @@ class PublicationController extends Controller
         
         return response(compact("message", "publication_qualification"));
     }
+
+    public function get_my_publications()
+    {
+        $publications = $this->model::where('user_id', Auth::user()->id)->get();
+
+        return response(compact("publications"));
+    } 
 }

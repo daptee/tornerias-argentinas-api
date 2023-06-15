@@ -20,8 +20,7 @@ class PublicationStatusSeeder extends Seeder
         $statuses = ["Pendiente", "En venta", "Pausada", "Cancelada"];
         foreach($statuses as $status)
         {
-            $new_publication_status = new $this->model(["name" => $status]);
-            $new_publication_status->save();    
+            $this->model::firstOrCreate(['name' => $status], ['name' => $status]);
         }
     }
 }
