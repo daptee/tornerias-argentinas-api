@@ -35,10 +35,11 @@ Route::controller(PublicationController::class)->group(function () {
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::resource('publications', PublicationController::class);
     Route::post('users/update', [UserController::class, 'update']);
-    Route::get('publications_featured', [PublicationController::class, 'get_featured']);
-    Route::get('get_publications_filters', [PublicationController::class, 'get_publications_filters']);
+    Route::get('get_my_publications', [PublicationController::class, 'get_my_publications']);
 });
 
 Route::get('categories', [CategoryController::class, 'get_all_categories']);
+Route::resource('publications', PublicationController::class);
+Route::get('get_publications_filters', [PublicationController::class, 'get_publications_filters']);
+Route::get('publications_featured', [PublicationController::class, 'get_featured']);
