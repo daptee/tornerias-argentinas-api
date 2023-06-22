@@ -18,6 +18,7 @@ class Publication extends Model
     ];
 
     const INDEX = [
+        'user',
         'status',
         'categories.category',
         'files'
@@ -33,12 +34,14 @@ class Publication extends Model
     ];
 
     const SHOW = [
+        'user',
         'status',
         'categories.category',
         'files'
     ];
 
     protected $fillable = [
+        'user_id',
         'title',
         'stock',
         'price',
@@ -47,8 +50,14 @@ class Publication extends Model
     ];
 
     protected $hidden = [
-        'status_id'
+        'user_id',
+        'status_id',
     ];
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 
     public function status(): HasOne
     {

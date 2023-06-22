@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\UserController;
 use App\Models\Publication;
@@ -36,7 +37,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::post('users/update', [UserController::class, 'update']);
+    Route::post('publications', [PublicationController::class, 'store']);
+    Route::post('orders', [OrderController::class, 'store']);
     Route::get('get_my_publications', [PublicationController::class, 'get_my_publications']);
+    Route::get('get_my_orders', [OrderController::class, 'get_my_orders']);
 });
 
 Route::get('categories', [CategoryController::class, 'get_all_categories']);

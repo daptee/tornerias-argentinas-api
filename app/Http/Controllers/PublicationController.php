@@ -108,6 +108,7 @@ class PublicationController extends Controller
         $data = $request->all();
         $new = new $this->model($data);
         try {
+            $new->user_id = Auth::user()->id;
             $new->save();
             $this->saveCategoriesPublication($request->categories, $new->id);
             $this->saveFilesPublication($request->publication_files, $new->id);
@@ -226,7 +227,7 @@ class PublicationController extends Controller
 
     public function get_my_publications()
     {
-        $publications = $this->model::where('user_id', Auth::user()->id)->get();
+        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->get();
 
         return response(compact("publications"));
     } 
