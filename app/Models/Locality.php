@@ -11,7 +11,7 @@ class Locality extends Model
     use HasFactory;
 
     protected $hidden = [
-        'province_id',
+        // 'province_id',
     ];
 
     public function province(): HasOne

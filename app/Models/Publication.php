@@ -26,6 +26,7 @@ class Publication extends Model
 
     const SELECT_SHOW = [
         'id',
+        'user_id',
         'title',
         'price',
         'description',
@@ -37,7 +38,9 @@ class Publication extends Model
         'user',
         'status',
         'categories.category',
-        'files'
+        'files',
+        'publication_qualifications',
+        'seller_qualifications'
     ];
 
     protected $fillable = [
@@ -72,5 +75,15 @@ class Publication extends Model
     public function files()
     {
         return $this->hasMany(PublicationFile::class, 'publication_id', 'id');
+    }
+
+    public function publication_qualifications()
+    {
+        return $this->hasMany(PublicationQualification::class, 'publication_id', 'id');
+    }
+
+    public function seller_qualifications()
+    {
+        return $this->hasMany(SellerQualification::class, 'user_id', 'id');
     }
 }
