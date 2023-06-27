@@ -129,10 +129,13 @@ class PublicationController extends Controller
     public function saveCategoriesPublication($categories, $publication_id)
     {
         foreach($categories as $category){
-            $publication_category = new PublicationCategory();
-            $publication_category->publication_id = $publication_id;
-            $publication_category->category_id = $category;
-            $publication_category->save();
+            $existing_publication_category = PublicationCategory::where('publication_id', $publication_id)->where('category_id')->first();
+            if(!$existing_publication_category) {
+                $publication_category = new PublicationCategory();
+                $publication_category->publication_id = $publication_id;
+                $publication_category->category_id = $category;
+                $publication_category->save();
+            }
         }
     }
 
@@ -188,9 +191,27 @@ class PublicationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Publication $publication)
     {
-        //
+        if(!$publication)
+            return response(["message" => "No existe publicación con el publication_id otorgado."], 400);
+        
+        if($publication->user_id != Auth::user()->id)
+            return response(["message" => "No puede modificar esta publicación."], 400);
+     
+        try {
+            DB::transaction(function () use($publication, $request) {
+                $publication->update($request->all()); 
+                $this->saveCategoriesPublication($request->categories, $publication->id);
+                // $this->saveFilesPublication($request->publication_files, $new->id);
+            });
+            $publication = $this->getAllPublication($publication->id);
+        } catch (\Throwable $th) {
+            Log::debug(print_r([$th->getMessage() . ", error al pausar publicación ID: $publication->id", $th->getLine()],  true));
+        }
+
+        $message = "Publicación actualizada con exito.";
+        return response(compact("publication", "message"));
     }
 
     /**
@@ -199,9 +220,19 @@ class PublicationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy(Publication $publication)
+    {   
+        try {
+            if($publication->user_id != Auth::user()->id)
+                return response(["message" => "No puede modificar esta publicación."], 400);
+
+            $publication->delete();
+        } catch (ModelNotFoundException $exception) {
+            return response(["message" => "Publicación no existente."], 400);
+        }
+
+        $message = "Publicación eliminada con exito.";
+        return response(compact("message"));
     }
 
     public function qualify_product(QualifyProductRequest $request)
