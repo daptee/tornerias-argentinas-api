@@ -39,7 +39,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // Publication Controller
     Route::post('publications', [PublicationController::class, 'store']);
     Route::get('publications/{id}', [PublicationController::class, 'show']);
-    Route::post('publications/{publication}', [PublicationController::class, 'update']);
+    Route::post('publications/update/{id_publication}', [PublicationController::class, 'update']);
     Route::delete('publications/{publication}', [PublicationController::class, 'destroy']);
     Route::post('publications/pause/{publication}', [PublicationController::class, 'pause_publication']);
     Route::get('get_my_publications', [PublicationController::class, 'get_my_publications']);

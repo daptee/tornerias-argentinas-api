@@ -129,7 +129,7 @@ class PublicationController extends Controller
     public function saveCategoriesPublication($categories, $publication_id)
     {
         foreach($categories as $category){
-            $existing_publication_category = PublicationCategory::where('publication_id', $publication_id)->where('category_id')->first();
+            $existing_publication_category = PublicationCategory::where('publication_id', $publication_id)->where('category_id', $category)->first();
             if(!$existing_publication_category) {
                 $publication_category = new PublicationCategory();
                 $publication_category->publication_id = $publication_id;
@@ -152,6 +152,26 @@ class PublicationController extends Controller
             $publication_category->publication_id = $publication_id;
             $publication_category->url = $path;
             $publication_category->save();
+        }
+    }
+
+    public function deleteImagesPublication($array_files_id, $publication_id)
+    {
+        foreach ($array_files_id as $file_id) {
+            $publication_file = PublicationFile::find($file_id);
+            
+            if($publication_file && $publication_file->publication_id == $publication_id){
+                // Obtiene la ruta completa del archivo en el sistema de archivos
+                $file_path = public_path($publication_file->url);
+    
+                // Verifica si el archivo existe antes de intentar eliminarlo
+                if (file_exists($file_path)) {
+                    // Elimina el archivo físico
+                    unlink($file_path);
+                }
+    
+                $publication_file->delete();
+            }
         }
     }
 
@@ -191,8 +211,9 @@ class PublicationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Publication $publication)
+    public function update(Request $request, $id_publication)
     {
+        $publication = Publication::find($id_publication);
         if(!$publication)
             return response(["message" => "No existe publicación con el publication_id otorgado."], 400);
         
@@ -203,7 +224,12 @@ class PublicationController extends Controller
             DB::transaction(function () use($publication, $request) {
                 $publication->update($request->all()); 
                 $this->saveCategoriesPublication($request->categories, $publication->id);
-                // $this->saveFilesPublication($request->publication_files, $new->id);
+                
+                if($request->delete_files)
+                    $this->deleteImagesPublication($request->delete_files, $publication->id);
+                
+                if($request->publication_files)
+                    $this->saveFilesPublication($request->publication_files, $publication->id);
             });
             $publication = $this->getAllPublication($publication->id);
         } catch (\Throwable $th) {
