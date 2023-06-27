@@ -8,12 +8,16 @@ use App\Models\Publication;
 use App\Models\PublicationCategory;
 use App\Models\PublicationFile;
 use App\Models\PublicationQualification;
+use App\Models\PublicationStatus;
+use App\Models\PublicationStatusHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PublicationController extends Controller
 {
@@ -231,4 +235,35 @@ class PublicationController extends Controller
 
         return response(compact("publications"));
     } 
+
+    public function pause_publication(Publication $publication)
+    {
+        if(!$publication)
+            return response(["message" => "No existe publicación con el publication_id otorgado."], 400);
+
+        // $status = PublicationStatus::find($request->status_id);
+
+        // if(!$status)
+            // return response(["message" => "No existe estado con el status_id otorgado."], 400);  
+        if($publication->user_id != Auth::user()->id)
+            return response(["message" => "No puede modificar esta publicación."], 400);
+
+        try {
+            DB::transaction(function () use($publication) {
+                $publication->status_id = PublicationStatus::PAUSED; // $request->status_id;
+                $publication->save();
+
+                $publication_status_history = new PublicationStatusHistory();
+                $publication_status_history->publication_id = $publication->id;
+                $publication_status_history->status_id = PublicationStatus::PAUSED; // $request->status_id;
+                $publication_status_history->save();
+            });
+        } catch (\Throwable $th) {
+            Log::debug(print_r([$th->getMessage() . ", error al pausar publicación ID: $publication->id", $th->getLine()],  true));
+        }
+
+        $publication = $this->getAllPublication($publication->id);
+        $message = "Publicación pausada con exito.";
+        return response(compact("publication", "message"));
+    }
 }
