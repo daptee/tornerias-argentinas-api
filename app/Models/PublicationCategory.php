@@ -17,6 +17,6 @@ class PublicationCategory extends Model
     }
 
     protected $hidden = [
-        'category_id'
+        // 'category_id'
     ];
 }

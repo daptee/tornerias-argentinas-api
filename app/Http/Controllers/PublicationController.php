@@ -184,16 +184,35 @@ class PublicationController extends Controller
     public function show($id)
     {
         $publication = $this->getAllPublication($id);
-    
         return response(compact("publication"));
     }
 
     public function getAllPublication($id)
     {
-        return $this->model::select($this->model::SELECT_SHOW)->with($this->model::SHOW)->find($id);
+        $publication = $this->model::select($this->model::SELECT_SHOW)->with($this->model::SHOW)->find($id);
+        $publication->related_publications = $this->get_related_publications($id);
+        return $publication;
     }
 
-    /**
+    public function get_related_publications($id)
+    {
+        $array_publication_categories = PublicationCategory::where('publication_id', $id)->pluck('category_id')->toArray();
+
+        $related_publications = PublicationCategory::where('publication_id', '!=', $id)
+                                ->whereIn('category_id', $array_publication_categories)
+                                ->get();
+
+        $array_related_publications = [];
+        foreach ($related_publications as $related_publication) {
+            if(!in_array($related_publication->publication_id, $array_related_publications))
+                $array_related_publications[] = $related_publication->publication_id;
+        };
+
+        return $this->model::select($this->model::SELECT_SHOW)->with($this->model::SHOW)->where('id', '!=', $id)
+                                            ->whereIn('id', $array_related_publications)
+                                            ->get();
+    }
+     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
