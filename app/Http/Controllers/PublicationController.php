@@ -57,12 +57,12 @@ class PublicationController extends Controller
     {
         $message = "Error al traer listado de {$this->sp}.";
         try {
+            // ->when($request->category_id, function ($query) use ($request) {
+            //     return $query->whereHas('categories', function ($subQuery) use ($request) {
+            //         $subQuery->where('category_id', $request->category_id);
+            //     });
+            // })
             $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
-            ->when($request->category_id, function ($query) use ($request) {
-                return $query->whereHas('categories', function ($subQuery) use ($request) {
-                    $subQuery->where('category_id', $request->category_id);
-                });
-            })
             ->when($request->price_from, function ($query) use ($request) {
                 return $query->where('price', '>=', $request->price_from);
             })
@@ -71,6 +71,11 @@ class PublicationController extends Controller
             })
             ->when($request->q, function ($query) use ($request) {
                 return $query->where('title', 'LIKE', '%'.$request->q.'%');
+            })
+            ->when($request->categories != null, function ($query) use ($request) {
+                return $query->WhereHas('categories', function ($q) use ($request) {
+                    $q->whereIn('category_id', $request->categories);
+                });
             })
             ->orderBy('id', 'desc');
             
