@@ -42,7 +42,8 @@ class Publication extends Model
         'categories.category',
         'files',
         'publication_qualifications',
-        'seller_qualifications'
+        'seller_qualifications',
+        'questions_answer'
     ];
 
     protected $fillable = [
@@ -87,5 +88,10 @@ class Publication extends Model
     public function seller_qualifications()
     {
         return $this->hasMany(SellerQualification::class, 'user_id', 'id');
+    }
+
+    public function questions_answer()
+    {
+        return $this->hasMany(PublicationQuestionAnswer::class, 'publication_id', 'id');
     }
 }

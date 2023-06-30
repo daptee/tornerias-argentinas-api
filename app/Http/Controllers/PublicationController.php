@@ -8,12 +8,14 @@ use App\Models\Publication;
 use App\Models\PublicationCategory;
 use App\Models\PublicationFile;
 use App\Models\PublicationQualification;
+use App\Models\PublicationQuestionAnswer;
 use App\Models\PublicationStatus;
 use App\Models\PublicationStatusHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Exception;
+use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -346,5 +348,38 @@ class PublicationController extends Controller
         $publication = $this->getAllPublication($publication->id);
         $message = "Publicación pausada con exito.";
         return response(compact("publication", "message"));
+    }
+
+    public function new_ask_answer_publication(Request $request)
+    {
+        if($request->ask){
+            $request->validate([
+                "publication_id" => ['required', 'integer', Rule::exists('publications', 'id')],
+            ]);
+            $ask = new PublicationQuestionAnswer();
+            $ask->publication_id = $request->publication_id;
+            $ask->user_id = Auth::user()->id;
+            $ask->ask = $request->ask;
+            $ask->ask_date = now()->format('Y-m-d H:i:s');
+            $ask->save();
+
+            $message = "Pregunta guardada exitosamente";
+        }else{
+            $request->validate([
+                "ask_id" => ['required', 'integer', Rule::exists('publications_questions_answers', 'id')],
+                'answer' => 'required',
+            ]);
+            $ask = PublicationQuestionAnswer::find($request->ask_id);
+            if($ask->publication->user->id != Auth::user()->id)
+                return response(["message" => "No es posible cargar la respuesta, usuario invalido."], 400);
+
+            $ask->answer = $request->answer;
+            $ask->answer_date = now()->format('Y-m-d H:i:s');
+            $ask->save();
+
+            $message = "Respuesta guardada exitosamente";
+        }
+
+        return response(compact("message", "ask"));
     }
 }
