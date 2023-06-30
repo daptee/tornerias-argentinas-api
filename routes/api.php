@@ -8,6 +8,7 @@ use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\UserController;
 use App\Models\Publication;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,3 +63,13 @@ Route::get('publications_featured', [PublicationController::class, 'get_featured
 // Localities
 Route::get('localities', [LocalityProvinceController::class, 'get_localities']);
 Route::get('provinces', [LocalityProvinceController::class, 'get_provinces']);
+
+// Clear cache
+Route::get('/clear-cache', function() {
+    Artisan::call('config:clear');
+    Artisan::call('optimize');
+
+    return response()->json([
+        "message" => "Cache cleared successfully"
+    ]);
+});
