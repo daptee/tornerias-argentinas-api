@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocalityProvinceController;
+use App\Http\Controllers\MercadoPagoController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\UserController;
@@ -35,6 +36,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     
     // User Controller
     Route::post('users/update', [UserController::class, 'update']);
+    Route::post('users/update/profile/picture', [UserController::class, 'update_profile_picture']);
     Route::post('qualify_seller', [UserController::class,'qualify_seller']);
     
     // Publication Controller
@@ -50,6 +52,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // Order Controller
     Route::post('orders', [OrderController::class, 'store']);
     Route::get('get_my_orders', [OrderController::class, 'get_my_orders']);
+
+    // Mercado Pago
+    Route::post('users/vinculation/mp/data', [UserController::class, 'vinculation_MP_user']);
+
 });
 
 // Category Controller
@@ -73,3 +79,5 @@ Route::get('/clear-cache', function() {
         "message" => "Cache cleared successfully"
     ]);
 });
+
+Route::post('payment/mercadopago/preference', [MercadoPagoController::class, 'createPay']);

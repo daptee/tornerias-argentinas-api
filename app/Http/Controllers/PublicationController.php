@@ -64,6 +64,8 @@ class PublicationController extends Controller
             //         $subQuery->where('category_id', $request->category_id);
             //     });
             // })
+            
+            // filtro de status = 2 
             $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
             ->when($request->price_from, function ($query) use ($request) {
                 return $query->where('price', '>=', $request->price_from);

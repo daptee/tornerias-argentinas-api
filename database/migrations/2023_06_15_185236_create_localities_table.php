@@ -15,9 +15,8 @@ return new class extends Migration
     {
         Schema::create('localities', function (Blueprint $table) {
             $table->id();
-            $table->string('localidad');
-            $table->string('cp');
             $table->foreignId('province_id')->references('id')->on('provinces');
+            $table->string('locality');
             $table->timestamps();
         });
     }

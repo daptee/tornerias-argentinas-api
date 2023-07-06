@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('status_id')->references('id')->on('publications_status')->default(PublicationStatus::ON_SALE);
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 
