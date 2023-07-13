@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\LocalityProvinceController;
 use App\Http\Controllers\MercadoPagoController;
 use App\Http\Controllers\OrderController;
@@ -80,4 +81,5 @@ Route::get('/clear-cache', function() {
     ]);
 });
 
-Route::post('payment/mercadopago/preference', [MercadoPagoController::class, 'createPay']);
+Route::post('payment/mercadopago/preference', [MercadoPagoController::class, 'create_pay']);
+Route::post('form/contact', [GeneralController::class, 'form_contact']);

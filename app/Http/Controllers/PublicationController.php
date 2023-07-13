@@ -192,6 +192,10 @@ class PublicationController extends Controller
      */
     public function show($id)
     {
+        $publication = Publication::find($id);
+        if(!isset($publication))
+            return response(["message" => "Publicacion no existente."], 400);
+
         $publication = $this->getAllPublication($id);
         return response(compact("publication"));
     }
