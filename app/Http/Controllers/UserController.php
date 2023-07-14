@@ -58,6 +58,17 @@ class UserController extends Controller
         
     }
 
+    public function show($id)
+    {
+        $user = User::find($id);
+        if(!$user)
+            return response()->json(['message' => 'Usuario no encontrado, por favor verifica el ID solicitado'], 400);
+
+        return response()->json([
+            'user' => $this->model::getAllDataUser($id)
+        ]);
+    }
+
     public function update(Request $request)
     {
         if (Auth::check()) {
@@ -149,7 +160,7 @@ class UserController extends Controller
     public function update_profile_picture(Request $request)
     {
         $request->validate([
-            'profile_picture' => 'required',
+            'profile_picture' => 'required|file|max:2048',
         ]);
 
         $user = Auth::user();

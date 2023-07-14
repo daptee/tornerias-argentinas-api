@@ -37,6 +37,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     
     // User Controller
     Route::post('users/update', [UserController::class, 'update']);
+    Route::get('users/{id}', [UserController::class, 'show']);
     Route::post('users/update/profile/picture', [UserController::class, 'update_profile_picture']);
     Route::post('qualify_seller', [UserController::class,'qualify_seller']);
     
