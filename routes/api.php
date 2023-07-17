@@ -64,7 +64,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 Route::get('categories', [CategoryController::class, 'get_all_categories']);
 
 // Publication Controller
-Route::resource('publications', PublicationController::class);
+// Route::resource('publications', PublicationController::class);
+Route::get('publications', [PublicationController::class, 'index']);
+Route::get('publications/{id}', [PublicationController::class, 'show']);
 Route::get('get_publications_filters', [PublicationController::class, 'get_publications_filters']);
 Route::get('publications_featured', [PublicationController::class, 'get_featured']);
 
