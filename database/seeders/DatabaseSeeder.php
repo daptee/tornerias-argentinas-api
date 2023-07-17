@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             CategoriesSeeder::class,
             UsersSeeder::class,
             PublicationStatusSeeder::class,
-            // ProvincesLocalitiesSeeder::class,
+            ProvincesLocalitiesSeeder::class,
         ]);
     }
 }

@@ -165,10 +165,12 @@ class UserController extends Controller
 
         $user = Auth::user();
         
-        $file_path = public_path($user->profile_picture);
+        if($user->profile_picture){
+            $file_path = public_path($user->profile_picture);
         
-        if (file_exists($file_path))
+            if (file_exists($file_path))
                  unlink($file_path);
+        }
 
         $path = $this->save_image_public_folder($request->profile_picture, "users/profiles/", null);
         
