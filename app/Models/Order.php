@@ -13,7 +13,8 @@ class Order extends Model
 
     const SHOW = [
         'user',
-        'products.publication'
+        'products.publication.files',
+        'products.publication.categories'
     ];
 
     protected $fillable = ["user_id"];

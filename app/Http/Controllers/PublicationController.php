@@ -325,15 +325,13 @@ class PublicationController extends Controller
         return response(compact("publications"));
     } 
 
-    public function pause_publication(Publication $publication)
+    public function pause_publication(Request $request, $id_publication)
     {
+        $publication = Publication::find($id_publication);
+        
         if(!$publication)
             return response(["message" => "No existe publicación con el publication_id otorgado."], 400);
 
-        // $status = PublicationStatus::find($request->status_id);
-
-        // if(!$status)
-            // return response(["message" => "No existe estado con el status_id otorgado."], 400);  
         if($publication->user_id != Auth::user()->id)
             return response(["message" => "No puede modificar esta publicación."], 400);
 
