@@ -46,7 +46,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('publications/update/{id_publication}', [PublicationController::class, 'update']);
     Route::delete('publications/{publication}', [PublicationController::class, 'destroy']);
     Route::post('publications/pause/{publication}', [PublicationController::class, 'pause_publication']);
-    Route::post('publications/pause_publication/{id_publication}', [PublicationController::class, 'pause_publication']);
     Route::get('get_my_publications', [PublicationController::class, 'get_my_publications']);
     Route::post('qualify_product', [PublicationController::class, 'qualify_product']);
     Route::post('publications/new/ask', [PublicationController::class, 'new_ask_answer_publication']);
@@ -87,3 +86,5 @@ Route::get('/clear-cache', function() {
 
 Route::post('payment/mercadopago/preference', [MercadoPagoController::class, 'create_pay']);
 Route::post('form/contact', [GeneralController::class, 'form_contact']);
+
+Route::post('pause/publication', [PublicationController::class, 'pause_publication']);
