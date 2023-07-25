@@ -131,7 +131,7 @@ class UserController extends Controller
     {
         try {
             $user = Auth::user();
-            $url = $request->input('url');
+            $url = $request->url;
             $code = '';
             // 'client_secret' => 'APP_USR-1967661118313269-033015-4a20088a2a111891e29f18575ff28ba3-688827045',
 
