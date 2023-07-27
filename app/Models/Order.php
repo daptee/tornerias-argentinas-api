@@ -16,6 +16,7 @@ class Order extends Model
         'products.publication.files',
         'products.publication.categories.category',
         'products.publication.user',
+        'products.publication.status',
     ];
 
     protected $fillable = ["user_id"];
