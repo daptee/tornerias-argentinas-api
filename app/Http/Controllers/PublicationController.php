@@ -336,13 +336,13 @@ class PublicationController extends Controller
             return response(["message" => "No puede modificar esta publicación."], 400);
 
         try {
-            DB::transaction(function () use($publication) {
-                $publication->status_id = PublicationStatus::PAUSED; // $request->status_id;
+            DB::transaction(function () use($publication, $request) {
+                $publication->status_id = $request->status_id;
                 $publication->save();
 
                 $publication_status_history = new PublicationStatusHistory();
                 $publication_status_history->publication_id = $publication->id;
-                $publication_status_history->status_id = PublicationStatus::PAUSED; // $request->status_id;
+                $publication_status_history->status_id = $request->status_id;
                 $publication_status_history->save();
             });
         } catch (\Throwable $th) {
