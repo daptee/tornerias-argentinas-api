@@ -135,19 +135,20 @@ class UserController extends Controller
             $url = $request->url;
             $code = '';
             // 'client_secret' => 'APP_USR-1967661118313269-033015-4a20088a2a111891e29f18575ff28ba3-688827045',
+            // 'client_secret' => 'Acs9IyNkkwh4RYgWhRPffhtJ6WjpqmCH',
 
             if (strpos($url, 'code') !== false) {
                 $code = explode('?code=', $url)[1];
 
                 $response = Http::post(config('services.mercadopago.vinculation'), [
-                    'client_secret' => 'Acs9IyNkkwh4RYgWhRPffhtJ6WjpqmCH',
+                    'client_secret' => 'TEST-6ae86470-2e6f-4068-b434-4bf0ed723eed',
                     'grant_type' => 'authorization_code',
                     'code' => $code,
                     'redirect_uri' => config('services.front_end.url') . '/configuracion',
                 ]);
     
                 Log::debug(print_r([$response->json()], true));
-                
+
                 $user->mercadopago = $response->json(); // Nuevo Campo -> mercadopago
                 $mercadopagoData = Http::get(config('services.mercadopago.users_data') . '/' . $user->mercadopago['user_id'])->json();
                 $user->mercadopagoData = $mercadopagoData; // Nuevo Campo -> mercadopagoData
