@@ -37,7 +37,7 @@ class Publication extends Model
     ];
 
     const SHOW = [
-        'user.locality',
+        'user.locality.province',
         'status',
         'categories.category',
         'files',
