@@ -140,7 +140,7 @@ class UserController extends Controller
             if (strpos($url, 'code') !== false) {
                 $code = explode('?code=', $url)[1];
 
-                Log::debug(print_r([$code, config('services.mercadopago.vinculation')], true));
+                Log::debug(print_r([config('services.front_end.url') . '/configuracion'], true));
 
                 $response = Http::post(config('services.mercadopago.vinculation'), [
                     'client_secret' => 'Acs9IyNkkwh4RYgWhRPffhtJ6WjpqmCH',
