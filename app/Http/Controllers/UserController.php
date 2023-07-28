@@ -146,6 +146,8 @@ class UserController extends Controller
                     'redirect_uri' => config('services.front_end.url') . '/configuracion',
                 ]);
     
+                Log::debug(print_r([$response->json()], true));
+                
                 $user->mercadopago = $response->json(); // Nuevo Campo -> mercadopago
                 $mercadopagoData = Http::get(config('services.mercadopago.users_data') . '/' . $user->mercadopago['user_id'])->json();
                 $user->mercadopagoData = $mercadopagoData; // Nuevo Campo -> mercadopagoData
