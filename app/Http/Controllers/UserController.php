@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
@@ -152,9 +153,9 @@ class UserController extends Controller
     
                 return response()->json($user, 200);
             }
-        } catch (\Exception $error) {
-            error_log($error);
-            return response()->json(['message' => '500 Internal Server Error'], 500);
+        } catch (\Throwable $th) {
+            Log::debug(print_r([$th->getMessage(), $th->getLine()], true));
+            return response()->json(['message' => 'Error al realizar vinculación.'], 500);
         }
     }
 
