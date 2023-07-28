@@ -11,8 +11,8 @@ class SellerQualification extends Model
     protected $table = "users_qualifications";
     
     protected $hidden = [
-        'user_id',
-        'seller_id'
+        // 'user_id',
+        // 'seller_id'
     ];
 
     protected $fillable = [
