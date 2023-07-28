@@ -57,6 +57,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // Mercado Pago
     Route::post('users/vinculation/mp/data', [UserController::class, 'vinculation_MP_user']);
+    Route::post('users/unlink/mp/data', [UserController::class, 'unlink_MP_user']);
 
     // Pause publication
     Route::post('pause/publication', [PublicationController::class, 'pause_publication']);

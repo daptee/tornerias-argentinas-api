@@ -132,6 +132,11 @@ class UserController extends Controller
     {
         try {
             $user = Auth::user();
+
+            if($user->mercadopago)
+                return response()->json(['message' => 'Usuario ya vinculado.'], 400);
+
+            // validar si ya esta vinculado
             $url = $request->url;
             $code = '';
             // 'client_secret' => 'APP_USR-1967661118313269-033015-4a20088a2a111891e29f18575ff28ba3-688827045',
@@ -163,6 +168,16 @@ class UserController extends Controller
             Log::debug(print_r([$th->getMessage(), $th->getLine()], true));
             return response()->json(['message' => 'Error al realizar vinculación.'], 500);
         }
+    }
+
+    public function unlink_MP_user()
+    {
+        $user = Auth::user();
+        $user->mercadopago = null; // Nuevo Campo -> mercadopago
+        $user->mercadopagoData = null; // Nuevo Campo -> mercadopagoData
+        $user->save();
+
+        return response()->json(['message' => 'Usuario desvinculado de mercado pago.', 'user' => $user], 200);
     }
 
     public function update_profile_picture(Request $request)
