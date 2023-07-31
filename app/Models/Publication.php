@@ -87,7 +87,7 @@ class Publication extends Model
 
     public function seller_qualifications()
     {
-        return $this->hasMany(SellerQualification::class, 'user_id', 'id');
+        return $this->hasMany(SellerQualification::class, 'seller_id', 'user_id');
     }
 
     public function questions_answer()
