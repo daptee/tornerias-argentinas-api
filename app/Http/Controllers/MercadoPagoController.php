@@ -30,7 +30,7 @@ class MercadoPagoController extends Controller
 
         // Crea un objeto de preferencia
         $preference = new MercadoPago\Preference();
-        // $preference->sandbox_mode = true; 
+        $preference->sandbox_mode = true; 
         $preference->back_urls = array(
             "success" => $request->url_back,
             "failure" => $request->url_back,
