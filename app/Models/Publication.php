@@ -22,7 +22,7 @@ class Publication extends Model
     const INDEX = [
         'user',
         'status',
-        'categories.category',
+        'categories.category.parent_category',
         'files'
     ];
 
