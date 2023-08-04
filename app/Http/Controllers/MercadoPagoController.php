@@ -25,8 +25,8 @@ class MercadoPagoController extends Controller
         // SDK de Mercado Pago
         require base_path('vendor/autoload.php');
         // Agrega credenciales
-        // MercadoPago\SDK::setAccessToken(config('services.mercadopago.token'));
-        MercadoPago\SDK::setAccessToken($access_token);
+        MercadoPago\SDK::setAccessToken(config('services.mercadopago.token'));
+        // MercadoPago\SDK::setAccessToken($access_token);
 
         // Crea un objeto de preferencia
         $preference = new MercadoPago\Preference();
