@@ -10,10 +10,11 @@ class LocalityProvinceController extends Controller
 {
     public function get_localities(Request $request)
     {
-        $request->validate(['province_id']);
-
-        $province_id = $request->province_id ?? 1;
-        $localities = Locality::where('province_id', $province_id)->get();
+        $localities = Locality::with('province')
+                    ->when($request->province_id, function ($query) use ($request) {
+                        return $query->where('province_id', '<=', $request->province_id);
+                    })
+                    ->get();
         
         return response(compact("localities"));
     }
