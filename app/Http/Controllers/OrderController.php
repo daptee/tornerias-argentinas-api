@@ -49,7 +49,7 @@ class OrderController extends Controller
     
     public function get_my_orders()
     {
-        $orders = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->get();
+        $orders = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
 
         return response(compact("orders"));
     } 
