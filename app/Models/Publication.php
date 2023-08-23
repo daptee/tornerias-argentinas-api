@@ -39,7 +39,7 @@ class Publication extends Model
     const SHOW = [
         'user.locality.province',
         'status',
-        'categories.category',
+        'categories.category.parent_category',
         'files',
         'publication_qualifications',
         'seller_qualifications',
