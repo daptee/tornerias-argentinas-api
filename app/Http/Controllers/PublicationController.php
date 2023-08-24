@@ -260,14 +260,16 @@ class PublicationController extends Controller
         try {
             DB::transaction(function () use($publication, $request) {
                 $publication->update($request->all()); 
-                $this->saveCategoriesPublication($request->categories, $publication->id);
+                
+                if($request->categories)
+                    $this->saveCategoriesPublication($request->categories, $publication->id);
                 
                 if($request->delete_files)
                     $this->deleteImagesPublication($request->delete_files, $publication->id);
 
-                if($request->publication_files){
+                if($request->publication_files)
                     $this->saveFilesPublication($request->publication_files, $publication->id);
-                }
+                
             });
         } catch (\Throwable $th) {
             Log::debug(print_r([$th->getMessage() . ", error al editar publicación ID: $publication->id", $th->getLine()],  true));
