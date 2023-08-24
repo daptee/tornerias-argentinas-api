@@ -16,11 +16,12 @@ class Publication extends Model
         'id',
         'title',
         'price',
+        'user_id',
         'status_id'
     ];
 
     const INDEX = [
-        'user',
+        'user.locality.province',
         'status',
         'categories.category.parent_category',
         'files'

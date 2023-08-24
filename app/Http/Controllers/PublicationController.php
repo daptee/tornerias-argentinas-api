@@ -59,13 +59,6 @@ class PublicationController extends Controller
     {
         $message = "Error al traer listado de {$this->sp}.";
         try {
-            // ->when($request->category_id, function ($query) use ($request) {
-            //     return $query->whereHas('categories', function ($subQuery) use ($request) {
-            //         $subQuery->where('category_id', $request->category_id);
-            //     });
-            // })
-            
-            // filtro de status = 2 
             $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
             ->when($request->price_from, function ($query) use ($request) {
                 return $query->where('price', '>=', $request->price_from);
@@ -79,6 +72,16 @@ class PublicationController extends Controller
             ->when($request->categories != null, function ($query) use ($request) {
                 return $query->WhereHas('categories', function ($q) use ($request) {
                     $q->whereIn('category_id', $request->categories);
+                });
+            })
+            ->when($request->locality_id, function ($query) use ($request) {
+                return $query->whereHas('user.locality', function ($q) use ($request) {
+                    $q->where('id', $request->locality_id);
+                });
+            })
+            ->when($request->province_id, function ($query) use ($request) {
+                return $query->whereHas('user.locality.province', function ($q) use ($request) {
+                    $q->where('id', $request->province_id);
                 });
             })
             ->orderBy('id', 'desc');
