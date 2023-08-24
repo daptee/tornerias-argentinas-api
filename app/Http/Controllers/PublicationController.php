@@ -154,6 +154,8 @@ class PublicationController extends Controller
     public function saveFilesPublication($files, $publication_id)
     {
         foreach($files as $file){
+            Log::debug("Entre aca en foreach");
+
             $fileName = Str::random(5) . time() . '.' . $file->extension();
                         
             $file->move(public_path("publications/$publication_id"), $fileName);
@@ -254,7 +256,7 @@ class PublicationController extends Controller
         
         if($publication->user_id != Auth::user()->id)
             return response(["message" => "No puede modificar esta publicación."], 400);
-     
+
         try {
             DB::transaction(function () use($publication, $request) {
                 $publication->update($request->all()); 
@@ -262,16 +264,18 @@ class PublicationController extends Controller
                 
                 if($request->delete_files)
                     $this->deleteImagesPublication($request->delete_files, $publication->id);
-                
-                if($request->publication_files)
+
+                if($request->publication_files){
                     $this->saveFilesPublication($request->publication_files, $publication->id);
+                }
             });
-            $publication = $this->getAllPublication($publication->id);
         } catch (\Throwable $th) {
-            Log::debug(print_r([$th->getMessage() . ", error al pausar publicación ID: $publication->id", $th->getLine()],  true));
+            Log::debug(print_r([$th->getMessage() . ", error al editar publicación ID: $publication->id", $th->getLine()],  true));
         }
 
         $message = "Publicación actualizada con exito.";
+        $publication = $this->getAllPublication($publication->id);
+
         return response(compact("publication", "message"));
     }
 
