@@ -93,6 +93,6 @@ class Publication extends Model
 
     public function questions_answer()
     {
-        return $this->hasMany(PublicationQuestionAnswer::class, 'publication_id', 'id');
+        return $this->hasMany(PublicationQuestionAnswer::class, 'publication_id', 'id')->orderBy('id', 'DESC');
     }
 }
