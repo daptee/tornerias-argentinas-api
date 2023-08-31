@@ -39,7 +39,7 @@ class PublicationController extends Controller
      */
     public function index()
     {
-        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
                             ->orderBy('id', 'desc')->take(4)
                             ->get();
 
@@ -48,7 +48,7 @@ class PublicationController extends Controller
 
     public function get_featured()
     {
-        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
         ->orderBy('id', 'desc')->take(6)
         ->get();
 
@@ -59,7 +59,7 @@ class PublicationController extends Controller
     {
         $message = "Error al traer listado de {$this->sp}.";
         try {
-            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
             ->when($request->price_from, function ($query) use ($request) {
                 return $query->where('price', '>=', $request->price_from);
             })
@@ -227,6 +227,7 @@ class PublicationController extends Controller
         };
 
         return $this->model::select($this->model::SELECT_SHOW)->with($this->model::SHOW)->where('id', '!=', $id)
+                                            ->where('status_id', PublicationStatus::ON_SALE)
                                             ->whereIn('id', $array_related_publications)
                                             ->get();
     }
@@ -329,7 +330,7 @@ class PublicationController extends Controller
 
     public function get_my_publications()
     {
-        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
+        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->where('status_id', PublicationStatus::ON_SALE)->orderBy('id', 'DESC')->get();
 
         return response(compact("publications"));
     } 
