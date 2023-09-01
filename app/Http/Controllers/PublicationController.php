@@ -298,6 +298,7 @@ class PublicationController extends Controller
                 return response(["message" => "No puede modificar esta publicación."], 400);
 
             $publication->status_id = PublicationStatus::DELETED;
+            $publication->save();
         } catch (ModelNotFoundException $exception) {
             return response(["message" => "Publicación no existente."], 400);
         }
