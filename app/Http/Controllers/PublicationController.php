@@ -41,7 +41,6 @@ class PublicationController extends Controller
     {
         $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
                             ->where('status_id', PublicationStatus::ON_SALE)
-                            ->whereNull('deleted_at')
                             ->orderBy('id', 'desc')->take(4)
                             ->get();
 
@@ -52,7 +51,6 @@ class PublicationController extends Controller
     {
         $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
         ->where('status_id', PublicationStatus::ON_SALE)
-        ->whereNull('deleted_at')
         ->orderBy('id', 'desc')->take(6)
         ->get();
 
@@ -65,7 +63,6 @@ class PublicationController extends Controller
         try {
             $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
             ->where('status_id', PublicationStatus::ON_SALE)
-            ->whereNull('deleted_at')
             ->when($request->price_from, function ($query) use ($request) {
                 return $query->where('price', '>=', $request->price_from);
             })
@@ -301,7 +298,6 @@ class PublicationController extends Controller
                 return response(["message" => "No puede modificar esta publicación."], 400);
 
             $publication->status_id = PublicationStatus::DELETED;
-            $publication->delete();
         } catch (ModelNotFoundException $exception) {
             return response(["message" => "Publicación no existente."], 400);
         }
@@ -337,7 +333,7 @@ class PublicationController extends Controller
 
     public function get_my_publications()
     {
-        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->whereNull('deleted_at')->orderBy('id', 'DESC')->get();
+        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->where('status_id', '!=', 5)->orderBy('id', 'DESC')->get();
 
         return response(compact("publications"));
     } 
