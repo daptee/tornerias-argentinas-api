@@ -300,6 +300,7 @@ class PublicationController extends Controller
             if($publication->user_id != Auth::user()->id)
                 return response(["message" => "No puede modificar esta publicación."], 400);
 
+            $publication->status_id = PublicationStatus::DELETED;
             $publication->delete();
         } catch (ModelNotFoundException $exception) {
             return response(["message" => "Publicación no existente."], 400);
@@ -336,7 +337,7 @@ class PublicationController extends Controller
 
     public function get_my_publications()
     {
-        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
+        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->whereNull('deleted_at')->orderBy('id', 'DESC')->get();
 
         return response(compact("publications"));
     } 

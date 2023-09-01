@@ -13,6 +13,7 @@ class PublicationStatus extends Model
     const ON_SALE = 2;
     const PAUSED = 3;
     const CANCELED = 4;
+    const DELETED = 5;
     
     protected $table = "publications_status";
 
