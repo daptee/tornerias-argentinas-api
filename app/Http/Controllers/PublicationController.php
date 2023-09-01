@@ -39,7 +39,9 @@ class PublicationController extends Controller
      */
     public function index()
     {
-        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
+        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+                            ->where('status_id', PublicationStatus::ON_SALE)
+                            ->whereNull('deleted_at')
                             ->orderBy('id', 'desc')->take(4)
                             ->get();
 
@@ -48,7 +50,9 @@ class PublicationController extends Controller
 
     public function get_featured()
     {
-        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
+        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+        ->where('status_id', PublicationStatus::ON_SALE)
+        ->whereNull('deleted_at')
         ->orderBy('id', 'desc')->take(6)
         ->get();
 
@@ -59,7 +63,9 @@ class PublicationController extends Controller
     {
         $message = "Error al traer listado de {$this->sp}.";
         try {
-            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
+            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+            ->where('status_id', PublicationStatus::ON_SALE)
+            ->whereNull('deleted_at')
             ->when($request->price_from, function ($query) use ($request) {
                 return $query->where('price', '>=', $request->price_from);
             })
