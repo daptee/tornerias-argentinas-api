@@ -143,6 +143,7 @@ class PublicationController extends Controller
 
     public function saveCategoriesPublication($categories, $publication_id)
     {
+        PublicationCategory::where('publication_id', $publication_id)->delete();
         foreach($categories as $category){
             $existing_publication_category = PublicationCategory::where('publication_id', $publication_id)->where('category_id', $category)->first();
             if(!$existing_publication_category) {
