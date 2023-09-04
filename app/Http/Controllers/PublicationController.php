@@ -39,7 +39,8 @@ class PublicationController extends Controller
      */
     public function index()
     {
-        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
+        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+                            ->where('status_id', PublicationStatus::ON_SALE)
                             ->orderBy('id', 'desc')->take(4)
                             ->get();
 
@@ -48,7 +49,8 @@ class PublicationController extends Controller
 
     public function get_featured()
     {
-        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
+        $data = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+        ->where('status_id', PublicationStatus::ON_SALE)
         ->orderBy('id', 'desc')->take(6)
         ->get();
 
@@ -59,7 +61,8 @@ class PublicationController extends Controller
     {
         $message = "Error al traer listado de {$this->sp}.";
         try {
-            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->where('status_id', PublicationStatus::ON_SALE)
+            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+            ->where('status_id', PublicationStatus::ON_SALE)
             ->when($request->price_from, function ($query) use ($request) {
                 return $query->where('price', '>=', $request->price_from);
             })
@@ -140,6 +143,7 @@ class PublicationController extends Controller
 
     public function saveCategoriesPublication($categories, $publication_id)
     {
+        PublicationCategory::where('publication_id', $publication_id)->delete();
         foreach($categories as $category){
             $existing_publication_category = PublicationCategory::where('publication_id', $publication_id)->where('category_id', $category)->first();
             if(!$existing_publication_category) {
@@ -294,7 +298,8 @@ class PublicationController extends Controller
             if($publication->user_id != Auth::user()->id)
                 return response(["message" => "No puede modificar esta publicación."], 400);
 
-            $publication->delete();
+            $publication->status_id = PublicationStatus::DELETED;
+            $publication->save();
         } catch (ModelNotFoundException $exception) {
             return response(["message" => "Publicación no existente."], 400);
         }
@@ -330,7 +335,7 @@ class PublicationController extends Controller
 
     public function get_my_publications()
     {
-        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->where('status_id', PublicationStatus::ON_SALE)->orderBy('id', 'DESC')->get();
+        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->where('status_id', '!=', 5)->orderBy('id', 'DESC')->get();
 
         return response(compact("publications"));
     } 

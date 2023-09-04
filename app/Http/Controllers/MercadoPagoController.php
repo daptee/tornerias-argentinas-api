@@ -38,13 +38,14 @@ class MercadoPagoController extends Controller
         );
         $preference->auto_return = "approved";
 
+        $total = $request->quantity + $request->unit_price;
         // Crea un ítem en la preferencia
         $item = new MercadoPago\Item();
         $item->title = $request->title;
         $item->quantity = $request->quantity;
         $item->unit_price = $request->unit_price;
         $preference->items = array($item);
-        $preference->marketplace_fee = 10;
+        $preference->marketplace_fee =  ($total * 5) / 100;
         $preference->save();
 
         // $payer_email = $preference->payer_email;
