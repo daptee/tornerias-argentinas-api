@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('locality_id')->nullable()->default(null)->references('id')->on('localities');
+            $table->foreignId('locality_id')->nullable()->default(null)->references('id')->on('localities')->after('last_name');
         });
     }
 

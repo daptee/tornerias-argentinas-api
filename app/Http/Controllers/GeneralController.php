@@ -6,6 +6,7 @@ use App\Mail\formContactMailable;
 use App\Models\formContact;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class GeneralController extends Controller
@@ -24,9 +25,10 @@ class GeneralController extends Controller
                 'text' => $request->text,
             ];
 
-            // Mail::to('info@torneriasargentinas.com')->send(new formContactMailable($data));
-            Mail::to('enzo100amarilla@gmail.com')->send(new formContactMailable($data));
+            Mail::to('info@torneriasargentinas.com')->send(new formContactMailable($data));
+            // Mail::to('enzo100amarilla@gmail.com')->send(new formContactMailable($data));
         } catch (Exception $error) {
+            Log::debug("Error: formulario de contacto, detalle: " . $error->getMessage());
             return response(["error" => $error->getMessage()], 500);
         }
        

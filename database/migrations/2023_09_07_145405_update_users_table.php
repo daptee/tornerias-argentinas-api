@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('user_type_id')->nullable()->default(1)->references('id')->on('users_types');
+            $table->foreignId('user_type_id')->nullable()->default(1)->references('id')->on('users_types')->after('last_name');
         });
     }
 
