@@ -24,7 +24,8 @@ class GeneralController extends Controller
                 'text' => $request->text,
             ];
 
-            Mail::to('info@torneriasargentinas.com')->send(new formContactMailable($data));
+            // Mail::to('info@torneriasargentinas.com')->send(new formContactMailable($data));
+            Mail::to('enzo100amarilla@gmail.com')->send(new formContactMailable($data));
         } catch (Exception $error) {
             return response(["error" => $error->getMessage()], 500);
         }
