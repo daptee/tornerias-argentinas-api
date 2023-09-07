@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Artisan;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
+    Route::post('login/admin', 'login_admin');
     Route::post('register', 'register');
 });
 
