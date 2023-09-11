@@ -24,6 +24,7 @@ class User extends Authenticatable implements JWTSubject
         'last_name',
         'email',
         'password',
+        'user_type_id'
     ];
 
     /**
@@ -63,5 +64,10 @@ class User extends Authenticatable implements JWTSubject
     public function locality(): HasOne
     {
         return $this->hasOne(Locality::class, 'id', 'locality_id');
+    }
+
+    public function user_type(): HasOne
+    {
+        return $this->hasOne(UserType::class, 'id', 'user_type_id');
     }
 }

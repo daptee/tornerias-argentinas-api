@@ -8,13 +8,15 @@
 </head>
 <body>
     <p>
-        Hola! Se ha recibido una solicitud de contacto mediante la pagina web <br><br>
+        Hola. Te informamos que ha llegado un nuevo contacto proveniente de la web. Te dejamos a continuacion los datos: <br><br>
 
-        Los datos que el usuario ha ingresado son: <br> <br>
-        
-        Nombre completo: {{ $data['name'] }} <br>
-        Email: {{ $data['email'] }} <br>
+        Nombre: {{ $data['name'] }} <br>
         Mensaje: {{ $data['text'] }} <br>
+        Email: {{ $data['email'] }} <br>
+
+        <br>
+        No demores en responderle. <br>
+        El equipo de Tornerias Argentinas
     </p>
 </body>
 </html>

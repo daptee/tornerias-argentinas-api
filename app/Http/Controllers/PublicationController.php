@@ -12,6 +12,7 @@ use App\Models\PublicationQuestionAnswer;
 use App\Models\PublicationStatus;
 use App\Models\PublicationStatusHistory;
 use App\Models\User;
+use App\Models\UserType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Exception;
@@ -129,8 +130,13 @@ class PublicationController extends Controller
         try {
             $new->user_id = Auth::user()->id;
             $new->save();
-            $this->saveCategoriesPublication($request->categories, $new->id);
-            $this->saveFilesPublication($request->publication_files, $new->id);
+
+            if($request->categories)
+                $this->saveCategoriesPublication($request->categories, $new->id);
+
+            if($request->publication_files)
+                $this->saveFilesPublication($request->publication_files, $new->id);
+
             $data = $this->model::with($this->model::SHOW)->findOrFail($new->id);
         } catch (ModelNotFoundException $error) {
             return response(["message" => "No se encontro {$this->pr} {$this->s}", "error" => $error->getMessage()], 404);
@@ -400,5 +406,50 @@ class PublicationController extends Controller
         }
 
         return response(compact("message", "ask"));
+    }
+
+    public function change_status_publication_admin(Request $request)
+    {
+        if(Auth::user()->user_type_id != UserType::ADMIN)
+            return response()->json(['message' => 'Usuario no admin.'], 400);
+
+        $request->validate([
+            "status_id" => ['required', 'integer'],
+            "publication_id" => ['required', 'integer', Rule::exists('publications', 'id')],
+        ]);
+
+        $publication = Publication::find($request->publication_id);
+        $publication->status_id = $request->status_id;
+        $publication->save();
+
+        $message = "Publicación actualizada con exito.";
+        $publication = $this->getAllPublication($publication->id);
+
+        return response(compact("message", "publication"));
+    }
+
+    public function admin_get_all_publications(Request $request)
+    {
+        if(Auth::user()->user_type_id != UserType::ADMIN)
+            return response()->json(['message' => 'Usuario no admin.'], 400);
+        
+        $message = "Error al traer listado de {$this->sp}.";
+        try {
+            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->orderBy('id', 'desc');
+            
+            $total = $query->count();
+            $total_per_page = 30;
+            $data  = $query->paginate($total_per_page);
+            $current_page = $request->page ?? $data->currentPage();
+            $last_page = $data->lastPage();
+
+        } catch (ModelNotFoundException $error) {
+            return response(["message" => "No se encontraron " . $this->sp . "."], 404);
+        } catch (Exception $error) {
+            return response(["message" => $message, "error" => $error->getMessage()], 500);
+        }
+        $message = ucfirst($this->sp) . " encontrad{$this->v}s exitosamente.";
+
+        return response(compact("message", "data", "total", "total_per_page", "current_page", "last_page"));
     }
 }

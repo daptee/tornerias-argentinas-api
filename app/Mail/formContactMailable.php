@@ -28,7 +28,7 @@ class formContactMailable extends Mailable
      */
     public function build()
     {
-        return $this->subject('Tornerias Argentinas - Formulario de contacto')
+        return $this->subject('Contacto web - Tornerias Argentinas')
                     ->view('emails.formContact');
     }
 }

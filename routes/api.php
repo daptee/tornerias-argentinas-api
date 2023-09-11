@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Artisan;
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
+    Route::post('login/admin', 'login_admin');
     Route::post('register', 'register');
 });
 
@@ -62,6 +63,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // Pause publication
     Route::post('pause/publication', [PublicationController::class, 'pause_publication']);
 
+    Route::post('admin/change/status/publication', [PublicationController::class, 'change_status_publication_admin']);
+
+    Route::get('admin/get/all/publications', [PublicationController::class, 'admin_get_all_publications']);
+    
 });
 
 // Category Controller

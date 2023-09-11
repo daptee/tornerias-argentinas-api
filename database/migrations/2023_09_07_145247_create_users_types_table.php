@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('locality_id')->nullable()->default(null)->references('id')->on('localities')->after('last_name');
+        Schema::create('users_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
@@ -25,9 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['locality_id']);
-            $table->dropColumn('locality_id');
-        });
+        Schema::dropIfExists('users_types');
     }
 };

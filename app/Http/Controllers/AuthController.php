@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\User;
+use App\Models\UserType;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
@@ -23,8 +24,8 @@ class AuthController extends Controller
     public $pr = "el"; 
     public $prp = "los";
     
-    public function login(LoginRequest $request){
-    
+    public function login(LoginRequest $request)
+    {
         $credentials = $request->only('email', 'password');
         try{
             $user = User::where('email' , $credentials['email'])->get();
@@ -40,6 +41,27 @@ class AuthController extends Controller
         }
     
         // Session::put('applocale', $request);
+        return $this->respondWithToken($token, Auth::user()->id);
+    }
+
+    public function login_admin(LoginRequest $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        // User admin 
+        $user_to_validate = User::where('email', $request->email)->first();
+        
+        if(!isset($user_to_validate) || $user_to_validate->user_type_id != UserType::ADMIN)
+            return response()->json(['message' => 'Email no existente o usuario no admin.'], 400);
+        
+        $credentials = $request->only('email', 'password');
+
+        if (! $token = JWTAuth::attempt($credentials))
+            return response()->json(['message' => 'Email y/o clave no válidos.'], 400);
+
         return $this->respondWithToken($token, Auth::user()->id);
     }
 
