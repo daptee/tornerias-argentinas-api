@@ -162,7 +162,9 @@ class UserController extends Controller
                 $user->mercadopagoData = $mercadopagoData; // Nuevo Campo -> mercadopagoData
                 $user->save();
     
-                return response()->json($user, 200);
+                return response()->json([
+                    'user' => $this->model::getAllDataUser($user->id)
+                ]);
             }
         } catch (\Throwable $th) {
             Log::debug(print_r([$th->getMessage(), $th->getLine()], true));
