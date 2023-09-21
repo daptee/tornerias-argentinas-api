@@ -11,7 +11,7 @@ class OrderPublication extends Model
     use HasFactory;
 
     const SHOW = [
-        'publication'
+        'publication.seller_qualifications'
     ];
 
     protected $table = "orders_publications";

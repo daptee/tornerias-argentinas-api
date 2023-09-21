@@ -13,6 +13,7 @@ class Order extends Model
 
     const SHOW = [
         'user',
+        'products.publication.seller_qualifications',
         'products.publication.files',
         'products.publication.categories.category',
         'products.publication.user',

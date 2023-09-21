@@ -17,7 +17,8 @@ class Publication extends Model
         'title',
         'price',
         'user_id',
-        'status_id'
+        'status_id',
+        'created_at'
     ];
 
     const INDEX = [
