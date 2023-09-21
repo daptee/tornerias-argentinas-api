@@ -341,7 +341,7 @@ class PublicationController extends Controller
 
     public function get_my_publications()
     {
-        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->where('status_id', '!=', 5)->orderBy('id', 'DESC')->get();
+        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->whereIn('status_id', [PublicationStatus::PENDING , PublicationStatus::ON_SALE, PublicationStatus::PAUSED])->orderBy('id', 'DESC')->get();
 
         return response(compact("publications"));
     } 
