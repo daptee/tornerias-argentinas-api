@@ -29,6 +29,7 @@ class Publication extends Model
         'categories.category.parent_category',
         'files',
         'questions_answer',
+        'publication_qualifications',
         'seller_qualifications',
     ];
 
