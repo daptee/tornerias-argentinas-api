@@ -17,15 +17,19 @@ class Publication extends Model
         'title',
         'price',
         'user_id',
+        'description',
+        'stock',
         'status_id',
-        'created_at'
+        'created_at',
     ];
 
     const INDEX = [
         'user.locality.province',
         'status',
         'categories.category.parent_category',
-        'files'
+        'files',
+        'questions_answer',
+        'seller_qualifications',
     ];
 
     const SELECT_SHOW = [
