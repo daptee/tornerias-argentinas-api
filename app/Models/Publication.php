@@ -28,7 +28,7 @@ class Publication extends Model
         'status',
         'categories.category.parent_category',
         'files',
-        'questions_answer',
+        'questions_answer.user',
         'publication_qualifications',
         'seller_qualifications',
     ];
@@ -48,9 +48,9 @@ class Publication extends Model
         'status',
         'categories.category.parent_category',
         'files',
+        'questions_answer.user',
         'publication_qualifications',
         'seller_qualifications',
-        'questions_answer'
     ];
 
     protected $fillable = [

@@ -26,4 +26,8 @@ class PublicationQuestionAnswer extends Model
         return $this->hasOne(Publication::class, 'id', 'publication_id');
     }
 
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }
