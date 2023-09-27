@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PublicationRequest;
 use App\Http\Requests\QualifyProductRequest;
+use App\Mail\changeStatusPublicationMailable;
 use App\Models\Publication;
 use App\Models\PublicationCategory;
 use App\Models\PublicationFile;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PublicationController extends Controller
 {
@@ -341,7 +343,7 @@ class PublicationController extends Controller
 
     public function get_my_publications()
     {
-        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->where('status_id', '!=', 5)->orderBy('id', 'DESC')->get();
+        $publications = $this->model::with($this->model::SHOW)->where('user_id', Auth::user()->id)->whereIn('status_id', [PublicationStatus::PENDING , PublicationStatus::ON_SALE, PublicationStatus::PAUSED])->orderBy('id', 'DESC')->get();
 
         return response(compact("publications"));
     } 
@@ -419,8 +421,24 @@ class PublicationController extends Controller
         ]);
 
         $publication = Publication::find($request->publication_id);
-        $publication->status_id = $request->status_id;
-        $publication->save();
+        try {
+            DB::transaction(function () use($publication, $request) {
+                $publication->status_id = $request->status_id;
+                $publication->save();
+            });
+            
+            if($request->status_id == PublicationStatus::CANCELED || $request->status_id == PublicationStatus::ON_SALE){
+                $data = [
+                    'user_name' => $publication->user->name,
+                    'publication_title' => $publication->title,
+                    'status' => $publication->status->name,
+                ];
+                Mail::to($publication->user->email)->send(new changeStatusPublicationMailable($data));
+            }
+
+        } catch (Exception $error) {
+            return response(["error" => $error->getMessage()], 500);
+        }
 
         $message = "Publicación actualizada con exito.";
         $publication = $this->getAllPublication($publication->id);
