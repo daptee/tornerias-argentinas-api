@@ -460,7 +460,7 @@ class PublicationController extends Controller
             ->orderBy('id', 'desc');
 
             $total = $query->count();
-            $total_per_page = 30;
+            $total_per_page = $request->total_per_page ?? 30;
             $data  = $query->paginate($total_per_page);
             $current_page = $request->page ?? $data->currentPage();
             $last_page = $data->lastPage();
