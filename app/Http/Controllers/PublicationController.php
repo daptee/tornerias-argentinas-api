@@ -453,8 +453,12 @@ class PublicationController extends Controller
         
         $message = "Error al traer listado de {$this->sp}.";
         try {
-            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)->orderBy('id', 'desc');
-            
+            $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
+            ->when($request->q, function ($query) use ($request) {
+                return $query->where('title', 'LIKE', '%'.$request->q.'%');
+            })
+            ->orderBy('id', 'desc');
+
             $total = $query->count();
             $total_per_page = 30;
             $data  = $query->paginate($total_per_page);
