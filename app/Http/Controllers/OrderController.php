@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\OrderPublication;
+use App\Models\Publication;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,10 @@ class OrderController extends Controller
             $order_publication = new OrderPublication($product);
             $order_publication->order_id = $order_id;
             $order_publication->save();
+
+            $publication = Publication::find($product['publication_id']);
+            $publication->stock = $publication->stock - $product['quantity'];
+            $publication->save();
         }
     }
     
