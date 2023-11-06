@@ -27,6 +27,7 @@ class OrderController extends Controller
         $new = new $this->model();
         try {
             $new->user_id = Auth::user()->id;
+            $new->price = $request->price;
             $new->save();
             $this->savePublicationsOrder($request->products, $new->id);
             $data = $this->model::getAllOrder($new->id);
