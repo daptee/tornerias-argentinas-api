@@ -17,10 +17,11 @@ class MercadoPagoController extends Controller
             return response(["message" => "No existe publicacion con el publication_id otorgado."], 400);
 
         $seller = $publication->user;
+        
         if(is_null($seller->mercadopago))
             return response(["message" => "El usuario dueño de la publicacion no posee vinculacion."], 400);
         
-        $access_token = json_decode($seller->mercadopago)->access_token;
+        $access_token = $seller->mercadopago['access_token'];
         
         // SDK de Mercado Pago
         require base_path('vendor/autoload.php');
