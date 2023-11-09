@@ -34,10 +34,19 @@ class OrderController extends Controller
         } catch (ModelNotFoundException $error) {
             return response(["message" => "No se encontro {$this->pr} {$this->s}", "error" => $error->getMessage()], 404);
         } catch (Exception $error) {
-            return response(["message" => "Error al recuperar {$this->s}", "error" => $error->getMessage()], 500);
+            return response(["message" => "Error al registrar {$this->s}", "error" => $error->getMessage()], 500);
         }
         $message = "{$this->s} creada exitosamente";
         return response(compact("message", "data"));
+    }
+
+    public function show($id)
+    {
+        $order = $this->model::with($this->model::SHOW)->find($id);
+        if(!$order)
+            return response(["message" => "Error al recuperar {$this->s}"], 400);
+
+        return response(compact("order"));
     }
 
     public function savePublicationsOrder($products, $order_id)
