@@ -55,6 +55,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // Order Controller
     Route::post('orders', [OrderController::class, 'store']);
     Route::get('orders/{id}', [OrderController::class, 'show']);
+    Route::post('orders/change_status/{id}', [OrderController::class, 'change_status_order']);
     Route::get('get_my_orders', [OrderController::class, 'get_my_orders']);
 
     // Mercado Pago

@@ -12,6 +12,7 @@ class Order extends Model
     use HasFactory;
 
     const SHOW = [
+        'status',
         'user',
         'products.publication.seller_qualifications',
         'products.publication.files',
@@ -30,6 +31,11 @@ class Order extends Model
     public function products(): HasMany
     {
         return $this->hasMany(OrderPublication::class, 'order_id', 'id');
+    }
+
+    public function status(): HasOne
+    {
+        return $this->hasOne(OrderStatus::class, 'id', 'status_id');
     }
 
     public static function getAllOrder($id)
