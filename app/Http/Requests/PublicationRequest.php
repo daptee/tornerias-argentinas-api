@@ -30,7 +30,7 @@ class PublicationRequest extends FormRequest
             'description' => 'required',
             'status_id' => 'required',
             'publication_files_doc' => 'nullable|array|max:5',
-            // 'publication_files_doc.*' => 'mimes:pdf,xml',
+            'publication_files_doc.*' => 'mimes:pdf,doc,xls',
         ];
     }
 
