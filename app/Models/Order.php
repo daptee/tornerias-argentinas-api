@@ -16,6 +16,7 @@ class Order extends Model
         'user',
         'products.publication.seller_qualifications',
         'products.publication.files',
+        'products.publication.files_doc',
         'products.publication.categories.category',
         'products.publication.user',
         'products.publication.status',
