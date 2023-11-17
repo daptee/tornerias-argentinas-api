@@ -137,7 +137,10 @@ class PublicationController extends Controller
                 $this->saveCategoriesPublication($request->categories, $new->id);
 
             if($request->publication_files)
-                $this->saveFilesPublication($request->publication_files, $new->id);
+                $this->saveFilesPublication($request->publication_files, $new->id, 'img');
+
+            if($request->publication_files_doc)
+                $this->saveFilesPublication($request->publication_files_doc, $new->id, 'doc');
 
             $data = $this->model::with($this->model::SHOW)->findOrFail($new->id);
         } catch (ModelNotFoundException $error) {
@@ -163,20 +166,17 @@ class PublicationController extends Controller
         }
     }
 
-    public function saveFilesPublication($files, $publication_id)
+    public function saveFilesPublication($files, $publication_id, $file_type)
     {
         foreach($files as $file){
-            Log::debug("Entre aca en foreach");
-
             $fileName = Str::random(5) . time() . '.' . $file->extension();
-                        
             $file->move(public_path("publications/$publication_id"), $fileName);
-            
             $path = "/publications/$publication_id/$fileName";
             
             $publication_category = new PublicationFile();
             $publication_category->publication_id = $publication_id;
             $publication_category->url = $path;
+            $publication_category->file_type = $file_type;
             $publication_category->save();
         }
     }
@@ -281,7 +281,10 @@ class PublicationController extends Controller
                     $this->deleteImagesPublication($request->delete_files, $publication->id);
 
                 if($request->publication_files)
-                    $this->saveFilesPublication($request->publication_files, $publication->id);
+                    $this->saveFilesPublication($request->publication_files, $publication->id, 'img');
+
+                if($request->publication_files_doc)
+                    $this->saveFilesPublication($request->publication_files_doc, $publication->id, 'doc');
                 
             });
         } catch (\Throwable $th) {
@@ -473,5 +476,15 @@ class PublicationController extends Controller
         $message = ucfirst($this->sp) . " encontrad{$this->v}s exitosamente.";
 
         return response(compact("message", "data", "total", "total_per_page", "current_page", "last_page"));
+    }
+    
+    public function get_seller_publications($id)
+    {
+        $publications = $this->model::select($this->model::SELECT_INDEX)
+                        ->with($this->model::INDEX)
+                        ->where('user_id', $id)
+                        ->get();
+
+        return response(compact("publications"));
     }
 }

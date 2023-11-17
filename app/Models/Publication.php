@@ -28,6 +28,7 @@ class Publication extends Model
         'status',
         'categories.category.parent_category',
         'files',
+        'files_doc',
         'questions_answer.user',
         'publication_qualifications',
         'seller_qualifications',
@@ -48,6 +49,7 @@ class Publication extends Model
         'status',
         'categories.category.parent_category',
         'files',
+        'files_doc',
         'questions_answer.user',
         'publication_qualifications',
         'seller_qualifications',
@@ -84,7 +86,12 @@ class Publication extends Model
 
     public function files()
     {
-        return $this->hasMany(PublicationFile::class, 'publication_id', 'id');
+        return $this->hasMany(PublicationFile::class, 'publication_id', 'id')->where('file_type', 'img');
+    }
+
+    public function files_doc()
+    {
+        return $this->hasMany(PublicationFile::class, 'publication_id', 'id')->where('file_type', 'doc');
     }
 
     public function publication_qualifications()

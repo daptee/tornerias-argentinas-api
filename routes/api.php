@@ -80,6 +80,7 @@ Route::get('publications', [PublicationController::class, 'index']);
 Route::get('publications/{id}', [PublicationController::class, 'show']);
 Route::get('get_publications_filters', [PublicationController::class, 'get_publications_filters']);
 Route::get('publications_featured', [PublicationController::class, 'get_featured']);
+Route::get('publications/seller/{id}', [PublicationController::class, 'get_seller_publications']);
 
 // Localities
 Route::get('localities', [LocalityProvinceController::class, 'get_localities']);
