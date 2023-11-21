@@ -484,6 +484,7 @@ class PublicationController extends Controller
                         ->with($this->model::INDEX)
                         ->where('user_id', $id)
                         ->where('status_id', PublicationStatus::ON_SALE)
+                        ->where('stock', '>', 0)                    
                         ->get();
 
         return response(compact("publications"));
