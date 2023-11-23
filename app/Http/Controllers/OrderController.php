@@ -8,6 +8,7 @@ use App\Models\OrderPublication;
 use App\Models\Publication;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -34,10 +35,40 @@ class OrderController extends Controller
         } catch (ModelNotFoundException $error) {
             return response(["message" => "No se encontro {$this->pr} {$this->s}", "error" => $error->getMessage()], 404);
         } catch (Exception $error) {
-            return response(["message" => "Error al recuperar {$this->s}", "error" => $error->getMessage()], 500);
+            return response(["message" => "Error al registrar {$this->s}", "error" => $error->getMessage()], 500);
         }
         $message = "{$this->s} creada exitosamente";
         return response(compact("message", "data"));
+    }
+
+    public function show($id)
+    {
+        $order = $this->model::with($this->model::SHOW)->find($id);
+        if(!$order)
+           return response(["message" => "Error al recuperar {$this->s}, ID order invalido"], 400);
+
+        return response(compact("order"));
+    }
+
+    public function change_status_order(Request $request, $id)
+    {
+        $request->validate([
+            'status_id' => 'required',
+        ]);
+        
+        $order = $this->model::with($this->model::SHOW)->find($request->id);
+        if(!$order)
+           return response(["message" => "Error al recuperar {$this->s}, ID order invalido"], 400);
+           
+        try {
+            $order->status_id = $request->status_id;
+            $order->save();
+        } catch (Exception $error) {
+            return response(["message" => "Error al actualizar estado de {$this->s}", "error" => $error->getMessage()], 500);
+        }  
+
+        $message = "Estado de {$this->s} actualizado exitosamente.";
+        return response(compact("message", "order"));
     }
 
     public function savePublicationsOrder($products, $order_id)

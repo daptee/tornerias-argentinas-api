@@ -29,6 +29,8 @@ class PublicationRequest extends FormRequest
             'price' => 'required|numeric',
             'description' => 'required',
             'status_id' => 'required',
+            'publication_files_doc' => 'nullable|array|max:5',
+            'publication_files_doc.*' => 'mimes:pdf,doc,xls',
         ];
     }
 
