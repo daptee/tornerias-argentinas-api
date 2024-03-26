@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PublicationRequest;
 use App\Http\Requests\QualifyProductRequest;
 use App\Mail\changeStatusPublicationMailable;
+use App\Models\Category;
 use App\Models\Publication;
 use App\Models\PublicationCategory;
 use App\Models\PublicationFile;
@@ -62,9 +63,6 @@ class PublicationController extends Controller
 
     public function get_publications_filters(Request $request)
     {
-        // Chequear que se cumplan con todos los requisitos de busqueda osea todos los filtros aplicacados sino devolver NULL
-        // Si yo seleccione una categoria que traiga las hijas tambien 
-
         $message = "Error al traer listado de {$this->sp}.";
         try {
             $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
@@ -76,8 +74,16 @@ class PublicationController extends Controller
                 return $query->where('price', '<=', $request->price_to);
             })
             ->when($request->q, function ($query) use ($request) {
-                return $query->where('title', 'LIKE', '%'.$request->q.'%');
-                // filtrar tambien por nombre de categorias y nombre de subcategoria categoria
+                $category = Category::where('name', 'LIKE', '%'.$request->q.'%')->first();
+                return $query->where(function($q) use ($request, $category) {
+                    $q->where('title', 'LIKE', '%'.$request->q.'%')
+                      ->orWhereHas('categories.category', function ($q) use ($request, $category) {
+                        $q->where('name', 'LIKE', '%'.$request->q.'%');
+                        if ($category) {
+                            $q->orWhere('parent_category_id', '=', $category->id);
+                        }
+                      });
+                });
             })
             ->when($request->categories != null, function ($query) use ($request) {
                 return $query->WhereHas('categories', function ($q) use ($request) {
