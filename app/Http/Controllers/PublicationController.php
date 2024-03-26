@@ -62,6 +62,9 @@ class PublicationController extends Controller
 
     public function get_publications_filters(Request $request)
     {
+        // Chequear que se cumplan con todos los requisitos de busqueda osea todos los filtros aplicacados sino devolver NULL
+        // Si yo seleccione una categoria que traiga las hijas tambien 
+
         $message = "Error al traer listado de {$this->sp}.";
         try {
             $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
@@ -74,6 +77,7 @@ class PublicationController extends Controller
             })
             ->when($request->q, function ($query) use ($request) {
                 return $query->where('title', 'LIKE', '%'.$request->q.'%');
+                // filtrar tambien por nombre de categorias y nombre de subcategoria categoria
             })
             ->when($request->categories != null, function ($query) use ($request) {
                 return $query->WhereHas('categories', function ($q) use ($request) {
@@ -93,7 +97,7 @@ class PublicationController extends Controller
             ->orderBy('id', 'desc');
             
             $total = $query->count();
-            $total_per_page = 30;
+            $total_per_page = $request->total_per_page ?? 30;
             $data  = $query->paginate($total_per_page);
             $current_page = $request->page ?? $data->currentPage();
             $last_page = $data->lastPage();
