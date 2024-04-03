@@ -26,7 +26,7 @@ class PublicationRequest extends FormRequest
         return [
             'title' => 'required',
             'stock' => 'required|integer',
-            'price' => 'required|numeric',
+            'price' => 'required',
             'description' => 'required',
             'status_id' => 'required',
             'publication_files_doc' => 'nullable|array|max:5',
