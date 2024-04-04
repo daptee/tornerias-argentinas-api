@@ -63,6 +63,7 @@ class PublicationController extends Controller
 
     public function get_publications_filters(Request $request)
     {
+        // $q->whereIn('category_id', $request->categories);
         $message = "Error al traer listado de {$this->sp}.";
         try {
             $query = $this->model::select($this->model::SELECT_INDEX)->with($this->model::INDEX)
@@ -86,8 +87,10 @@ class PublicationController extends Controller
                 });
             })
             ->when($request->categories != null, function ($query) use ($request) {
-                return $query->WhereHas('categories', function ($q) use ($request) {
-                    $q->whereIn('category_id', $request->categories);
+                return $query->whereHas('categories', function ($q) use ($request) {
+                    $q->whereIn('category_id', $request->categories)
+                      ->groupBy('publication_id')
+                      ->havingRaw('COUNT(DISTINCT category_id) = ?', [count($request->categories)]);
                 });
             })
             ->when($request->locality_id, function ($query) use ($request) {
