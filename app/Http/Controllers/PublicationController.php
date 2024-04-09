@@ -102,14 +102,22 @@ class PublicationController extends Controller
                 });
             })
             ->when($request->categories != null, function ($query) use ($request) {
-                return $query->whereHas('categories', function ($q) use ($request) {
-                    foreach ($request->categories as $categoryId) {
-                        $q->whereHas('category', function ($cq) use ($categoryId) {
-                            $cq->where('id', $categoryId)
-                             ->orWhere('parent_category_id', $categoryId);
-                        });
-                    }
-                });
+                if($request->are_parents){
+                    return $query->whereHas('categories', function ($q) use ($request) {
+                        $q->whereIn('category_id', $request->categories)
+                            ->groupBy('publication_id')
+                            ->havingRaw('COUNT(DISTINCT category_id) = ?', [count($request->categories)]);
+                    });
+                }else{
+                    return $query->whereHas('categories', function ($q) use ($request) {
+                        foreach ($request->categories as $categoryId) {
+                            $q->whereHas('category', function ($cq) use ($categoryId) {
+                                $cq->where('id', $categoryId)
+                                ->orWhere('parent_category_id', $categoryId);
+                            });
+                        }
+                    });
+                }
             })
             ->when($request->locality_id, function ($query) use ($request) {
                 return $query->whereHas('user.locality', function ($q) use ($request) {
