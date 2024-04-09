@@ -63,6 +63,21 @@ class PublicationController extends Controller
 
     public function get_publications_filters(Request $request)
     {
+        // return $query->whereHas('categories', function ($q) use ($request) {
+        //     $q->whereIn('category_id', $request->categories)
+        //       ->groupBy('publication_id')
+        //       ->havingRaw('COUNT(DISTINCT category_id) = ?', [count($request->categories)]);
+        // });
+
+        // return $query->where(function($q) use ($request) {
+        //     $q->whereHas('categories', function ($q) use ($request) {
+        //         $q->whereIn('category_id', $request->categories);
+        //     })
+        //     ->orWhereHas('categories.category', function ($q) use ($request) {
+        //         $q->whereIn('parent_category_id', $request->categories);
+        //     });
+        // });
+
         // $q->whereIn('category_id', $request->categories);
         $message = "Error al traer listado de {$this->sp}.";
         try {
@@ -88,9 +103,12 @@ class PublicationController extends Controller
             })
             ->when($request->categories != null, function ($query) use ($request) {
                 return $query->whereHas('categories', function ($q) use ($request) {
-                    $q->whereIn('category_id', $request->categories)
-                      ->groupBy('publication_id')
-                      ->havingRaw('COUNT(DISTINCT category_id) = ?', [count($request->categories)]);
+                    foreach ($request->categories as $categoryId) {
+                        $q->whereHas('category', function ($cq) use ($categoryId) {
+                            $cq->where('id', $categoryId)
+                             ->orWhere('parent_category_id', $categoryId);
+                        });
+                    }
                 });
             })
             ->when($request->locality_id, function ($query) use ($request) {
